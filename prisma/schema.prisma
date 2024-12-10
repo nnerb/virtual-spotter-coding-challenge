@@ -1,0 +1,43 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Studio table
+model Studio {
+  id         Int       @id @default(autoincrement()) 
+  name       String
+  location   String
+  fb_budget  Float
+  is_active  Boolean   @default(true)
+  created_at DateTime  @default(now()) 
+  updated_at DateTime  @updatedAt 
+
+  // Relationship with Studio Performance Data Table
+  performanceData StudioPerformanceData[]
+}
+
+model StudioPerformanceData {
+  id               Int       @id @default(autoincrement())
+  studio_id        Int
+  fb_ad_leads      Int
+  non_fb_ad_leads  Int
+  paused_members   Int
+  average_members  Int
+  cpl              Float
+  churn            Float
+  created_at       DateTime  @default(now())
+  updated_at       DateTime  @updatedAt
+  
+  studio           Studio    @relation(fields: [studio_id], references: [id])
+}
